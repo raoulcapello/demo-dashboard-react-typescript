@@ -1,12 +1,73 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ThemeCard } from "@/components/ThemeCard";
+import { Header } from "@/components/Header";
+import { fetchThemes } from "@/services/mockApi";
+import { Theme } from "@/types";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadThemes = async () => {
+      try {
+        const fetchedThemes = await fetchThemes();
+        setThemes(fetchedThemes);
+      } catch (error) {
+        console.error('Failed to fetch themes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadThemes();
+  }, []);
+
+  const handleViewPositions = (slug: string) => {
+    navigate(`/theme/${slug}`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center space-y-4">
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              Vergelijk eenvoudig de standpunten van Nederlandse politieke partijen 
+              op belangrijke thema's voor de verkiezingen.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {themes.map((theme) => (
+              <ThemeCard
+                key={theme.id}
+                theme={theme}
+                onViewPositions={handleViewPositions}
+              />
+            ))}
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
