@@ -37,6 +37,12 @@ I built it with React, TypeScript, shadcn/ui, and ViteJS, with a focus on rapid 
 
 This project is instantly previewable via Netlify, you can find it [here](https://demodashboardvotinginfo.netlify.app/).
 
+Check out the:
+
+- [home page](https://demodashboardvotinginfo.netlify.app/)
+- [insights page](https://demodashboardvotinginfo.netlify.app/insights)
+- [admin page](https://demodashboardvotinginfo.netlify.app/admin)
+
 ## Getting Started (for Developers)
 
 Interested in running this project locally? Follow these steps:
