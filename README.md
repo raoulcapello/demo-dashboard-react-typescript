@@ -83,9 +83,9 @@ This project is instantly previewable via Netlify, you can find it [here](https:
 
 Check out the:
 
-- [home page](https://demodashboardvotinginfo.netlify.app/)
-- [insights page](https://demodashboardvotinginfo.netlify.app/insights)
-- [admin page](https://demodashboardvotinginfo.netlify.app/admin)
+- [Home page](https://demodashboardvotinginfo.netlify.app/)
+- [Insights page](https://demodashboardvotinginfo.netlify.app/insights)
+- [Admin page](https://demodashboardvotinginfo.netlify.app/admin)
 
 ## Getting Started (for Developers)
 
@@ -112,4 +112,4 @@ npm run dev
 
 The project uses Vite for instant hot-reloading and fast feedback during development. You can now access the app at [http://localhost:8080/](http://localhost:8080/) (or the port shown in your terminal).
 
-For any questions or contributions, feel free to open an issue or pull request, or contact me via [LinkedIn](https://www.linkedin.com/in/raoulcapello/) or [email](mailto:raoul@raoulcapello.nl).
+For any questions or contributions, feel free to open an issue or pull request, or contact me via [LinkedIn](https://www.linkedin.com/in/raoulcapello/) or [email](mailto:raoul@raoulcapello.nl)! 🙂
