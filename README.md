@@ -18,27 +18,37 @@ Below are some screenshots demonstrating the main features and pages of this pro
 
 **Homepage**
 
-<img src="Images/Homepage.png" alt="Homepage" style="border:1px solid #ccc; border-radius:8px; margin:8px 0; max-width:100%; box-shadow:0 4px 16px rgba(0,0,0,0.12);" />
+![Homepage](Images/Homepage.png)
+
+---
 
 **Insights Page**
 
-<img src="Images/Insights.png" alt="Insights Page" style="border:1px solid #ccc; border-radius:8px; margin:8px 0; max-width:100%; box-shadow:0 4px 16px rgba(0,0,0,0.12);" />
+![Insights](Images/Insights.png)
+
+---
 
 **Party Comparison**
 
-<img src="Images/Party%20Comparison.png" alt="Party Comparison" style="border:1px solid #ccc; border-radius:8px; margin:8px 0; max-width:100%; box-shadow:0 4px 16px rgba(0,0,0,0.12);" />
+![Party Comparison](Images/Party%20Comparison.png)
+
+---
 
 **Admin Page (View 1)**
 
-<img src="Images/Admin1.png" alt="Admin Page 1" style="border:1px solid #ccc; border-radius:8px; margin:8px 0; max-width:100%; box-shadow:0 4px 16px rgba(0,0,0,0.12);" />
+![Admin Page 1](Images/Admin1.png)
+
+---
 
 **Admin Page (View 2)**
 
-<img src="Images/Admin2.png" alt="Admin Page 2" style="border:1px solid #ccc; border-radius:8px; margin:8px 0; max-width:100%; box-shadow:0 4px 16px rgba(0,0,0,0.12);" />
+![Admin Page 2](Images/Admin2.png)
+
+---
 
 **Admin Page (View 3)**
 
-<img src="Images/Admin3.png" alt="Admin Page 3" style="border:1px solid #ccc; border-radius:8px; margin:8px 0; max-width:100%; box-shadow:0 4px 16px rgba(0,0,0,0.12);" />
+![Admin Page 3](Images/Admin3.png)
 
 ## Tech Stack & Tools
 
