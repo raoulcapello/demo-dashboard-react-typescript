@@ -6,6 +6,40 @@ Not only did I built this prototype in under an hour - I also implemented automa
 
 I built it with React, TypeScript, shadcn/ui, and ViteJS, with a focus on rapid prototyping, clean architecture, and automated deployment.
 
+## Prototype Disclaimer
+
+> This project is a very early prototype and is not intended for real-world use. While it demonstrates working frontend functionality, it does not include a backend, production database, authentication, or other complex features required for a production application.
+>
+> However, it serves as proof of my ability to leverage modern tools to quickly develop a usable frontend prototype. This approach enables rapid iteration and can significantly accelerate the early stages of developing a new app.
+
+## Screenshots
+
+Below are some screenshots demonstrating the main features and pages of this prototype:
+
+**Homepage**
+
+![Homepage](Images/Homepage.png)
+
+**Insights Page**
+
+![Insights](Images/Insights.png)
+
+**Party Comparison**
+
+![Party Comparison](Images/Party%20Comparison.png)
+
+**Admin Page (View 1)**
+
+![Admin Page 1](Images/Admin1.png)
+
+**Admin Page (View 2)**
+
+![Admin Page 2](Images/Admin2.png)
+
+**Admin Page (View 3)**
+
+![Admin Page 3](Images/Admin3.png)
+
 ## Tech Stack & Tools
 
 - **React**: Component-driven UI development for scalable, maintainable interfaces.
