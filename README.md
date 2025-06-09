@@ -1,6 +1,10 @@
 # Project Overview
 
-This demo project showcases a modern, production-ready frontend built in under an hour. It demonstrates expertise in React, TypeScript, shadcn/ui, and ViteJS, with a focus on rapid prototyping, clean architecture, and automated deployment. The project was developed using a streamlined workflow with the Cursor IDE and Lovable for instant preview and deployment.
+This demo project showcases a modern, production-ready frontend that I built in under an hour, using a vibe coding workflow using [Lovable](https://lovable.dev/) and the [Cursor IDE](https://www.cursor.com/).
+
+Not only did I built this prototype in under an hour - I also implemented automated deployment in minutes using [Netlfiy](https://www.netlify.com/).
+
+I built it with React, TypeScript, shadcn/ui, and ViteJS, with a focus on rapid prototyping, clean architecture, and automated deployment.
 
 ## Tech Stack & Tools
 
@@ -11,6 +15,7 @@ This demo project showcases a modern, production-ready frontend built in under a
 - **Tailwind CSS**: Utility-first CSS framework for consistent, responsive styling.
 - **Lovable**: Automated deployment and instant preview, enabling continuous delivery from the first commit.
 - **Cursor IDE**: Efficient, "vibe" coding experience with AI-powered assistance and modern developer ergonomics.
+- **Netlify**: Deploy any modern frontend stack in minutes.
 
 ## Development Approach
 
@@ -18,7 +23,7 @@ This demo project showcases a modern, production-ready frontend built in under a
 - **TypeScript Best Practices**: Utilized advanced types, discriminated unions, and type inference for robust, self-documenting code.
 - **Component Modularity**: Structured with reusable, composable React components and hooks.
 - **UI/UX Quality**: Leveraged shadcn/ui and Tailwind CSS for accessible, visually appealing interfaces.
-- **Automated Deployment**: Integrated Lovable for seamless, zero-config deployment and instant sharing.
+- **Automated Deployment**: Integrated Netlify for seamless, zero-config deployment and instant sharing.
 - **Modern Workflow**: Used Cursor IDE for fast iteration, code intelligence, and a smooth developer experience.
 
 ## What This Demonstrates
@@ -30,11 +35,11 @@ This demo project showcases a modern, production-ready frontend built in under a
 
 ## Live Preview & Deployment
 
-This project is continuously deployed and instantly previewable via Lovable. For more details or a live demo, visit the [Lovable Project Page](https://lovable.dev/projects/9a3a3c78-d31f-4c7b-94bd-d0fa61d03f19).
+This project is instantly previewable via Netlify, you can find it [here](https://demodashboardvotinginfo.netlify.app/).
 
 ## Getting Started (for Developers)
 
-Interested in running or contributing to this project locally? Follow these steps:
+Interested in running this project locally? Follow these steps:
 
 ### Prerequisites
 
@@ -45,8 +50,8 @@ Interested in running or contributing to this project locally? Follow these step
 
 ```sh
 # 1. Clone the repository
-git clone <YOUR_GIT_URL>
-cd <YOUR_PROJECT_NAME>
+git clone https://github.com/raoulcapello/demo-dashboard-react-typescript.git
+cd demo-dashboard-react-typescript
 
 # 2. Install dependencies
 npm install
@@ -55,6 +60,6 @@ npm install
 npm run dev
 ```
 
-The project uses Vite for instant hot-reloading and fast feedback during development. You can now access the app at [http://localhost:5173](http://localhost:5173) (or the port shown in your terminal).
+The project uses Vite for instant hot-reloading and fast feedback during development. You can now access the app at [http://localhost:8080/](http://localhost:8080/) (or the port shown in your terminal).
 
-For any questions or contributions, feel free to open an issue or pull request.
+For any questions or contributions, feel free to open an issue or pull request, or contact me via [LinkedIn](https://www.linkedin.com/in/raoulcapello/) or [email](mailto:raoul@raoulcapello.nl).
