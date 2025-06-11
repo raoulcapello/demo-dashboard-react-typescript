@@ -4,14 +4,17 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Bar, BarChart as RechartsBarChart, XAxis, YAxis } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { fetchThemes, fetchPositionsByTheme } from "@/services/mockApi";
+import { calculateAvgContentLength, safeNumber, validateChartData } from "@/utils/chartUtils";
 
 export const BarChart = () => {
-  const { data: themes = [] } = useQuery({
+  // Fetch themes with error handling
+  const { data: themes = [], isLoading: themesLoading, error: themesError } = useQuery({
     queryKey: ['themes'],
     queryFn: fetchThemes,
   });
 
-  const { data: allPositions = [] } = useQuery({
+  // Fetch all positions with proper error handling
+  const { data: allPositions = [], isLoading: positionsLoading, error: positionsError } = useQuery({
     queryKey: ['all-positions'],
     queryFn: async () => {
       const positions = await Promise.all(
@@ -22,19 +25,73 @@ export const BarChart = () => {
     enabled: themes.length > 0,
   });
 
-  const chartData = themes.map(theme => {
-    const themePositions = allPositions.filter(pos => pos.themeId === theme.id);
-    const avgContentLength = themePositions.reduce((sum, pos) => 
-      sum + pos.summary.length + pos.quote.length, 0) / (themePositions.length || 1);
+  // Show loading state
+  if (themesLoading || positionsLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Thema engagement analyse</CardTitle>
+          <CardDescription>Laden van gegevens...</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <div className="text-muted-foreground">Gegevens worden geladen...</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show error state
+  if (themesError || positionsError) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Thema engagement analyse</CardTitle>
+          <CardDescription>Er is een fout opgetreden bij het laden van gegevens</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <div className="text-muted-foreground">Kon gegevens niet laden</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Create chart data with proper validation
+  const rawChartData = themes.map((theme, index) => {
+    const themePositions = allPositions.filter(pos => pos?.themeId === theme.id);
+    
+    // Calculate average content length safely
+    const avgContentLength = calculateAvgContentLength(themePositions);
+    
+    // Normalize engagement score to reasonable scale (0-100)
+    const engagement = safeNumber(Math.round(avgContentLength / 10), 0, 0, 100);
     
     return {
-      theme: theme.title, // Show full title instead of truncating
-      fullTheme: theme.title,
-      engagement: Math.round(avgContentLength / 10), // Normalize to reasonable scale
+      theme: theme.title || 'Onbekend thema',
+      fullTheme: theme.title || 'Onbekend thema',
+      engagement,
       positions: themePositions.length,
-      fill: `hsl(${210 + themes.indexOf(theme) * 30}, 70%, 50%)`,
+      fill: `hsl(${210 + index * 30}, 70%, 50%)`,
     };
-  }).sort((a, b) => b.engagement - a.engagement);
+  }).filter(item => item.engagement > 0) // Only include themes with actual engagement
+    .sort((a, b) => b.engagement - a.engagement);
+
+  // Validate chart data before rendering
+  const chartData = validateChartData(rawChartData);
+
+  // Show empty state if no valid data
+  if (chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Thema engagement analyse</CardTitle>
+          <CardDescription>Geen gegevens beschikbaar voor analyse</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <div className="text-muted-foreground">Geen engagement gegevens gevonden</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const chartConfig = {
     engagement: {
@@ -61,7 +118,12 @@ export const BarChart = () => {
               right: 10,
             }}
           >
-            <XAxis type="number" dataKey="engagement" hide />
+            <XAxis 
+              type="number" 
+              dataKey="engagement" 
+              hide 
+              domain={[0, 'dataMax']}
+            />
             <YAxis
               dataKey="theme"
               type="category"

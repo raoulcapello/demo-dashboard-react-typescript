@@ -7,19 +7,19 @@ import { useState } from "react";
 export const WordCloud = () => {
   const [selectedTheme, setSelectedTheme] = useState<string>('all');
 
-  // Fetch themes and parties
-  const { data: themes = [] } = useQuery({
+  // Fetch themes and parties with error handling
+  const { data: themes = [], isLoading: themesLoading, error: themesError } = useQuery({
     queryKey: ['themes'],
     queryFn: fetchThemes,
   });
 
-  const { data: parties = [] } = useQuery({
+  const { data: parties = [], isLoading: partiesLoading, error: partiesError } = useQuery({
     queryKey: ['parties'],
     queryFn: fetchParties,
   });
 
-  // Fetch positions based on selected theme
-  const { data: allPositions = [] } = useQuery({
+  // Fetch positions based on selected theme with error handling
+  const { data: allPositions = [], isLoading: allPositionsLoading, error: allPositionsError } = useQuery({
     queryKey: ['all-positions-wordcloud'],
     queryFn: async () => {
       const allPositions = await Promise.all(
@@ -30,7 +30,7 @@ export const WordCloud = () => {
     enabled: themes.length > 0 && selectedTheme === 'all',
   });
 
-  const { data: themePositions = [] } = useQuery({
+  const { data: themePositions = [], isLoading: themePositionsLoading, error: themePositionsError } = useQuery({
     queryKey: ['theme-positions-wordcloud', selectedTheme],
     queryFn: () => fetchPositionsByTheme(selectedTheme),
     enabled: selectedTheme !== 'all',
@@ -38,6 +38,8 @@ export const WordCloud = () => {
 
   // Use the correct positions based on selected theme
   const positions = selectedTheme === 'all' ? allPositions : themePositions;
+  const isLoading = themesLoading || partiesLoading || allPositionsLoading || themePositionsLoading;
+  const error = themesError || partiesError || allPositionsError || themePositionsError;
 
   /**
    * Simple color palette with guaranteed contrast
@@ -56,34 +58,47 @@ export const WordCloud = () => {
   };
 
   /**
-   * Extract keywords from position data
+   * Extract keywords from position data with improved validation
    */
   const extractKeywords = () => {
-    // Filter valid positions with proper content
-    const validPositions = positions.filter(pos => 
-      pos && (
-        (pos.summary && pos.summary.trim().length > 3) ||
-        (pos.quote && pos.quote.trim().length > 3)
-      )
-    );
+    // Validate positions array
+    if (!Array.isArray(positions) || positions.length === 0) return [];
+
+    // Filter valid positions with proper content and improved validation
+    const validPositions = positions.filter(pos => {
+      if (!pos || typeof pos !== 'object') return false;
+      
+      const summary = pos.summary && typeof pos.summary === 'string' ? pos.summary.trim() : '';
+      const quote = pos.quote && typeof pos.quote === 'string' ? pos.quote.trim() : '';
+      
+      return summary.length > 3 || quote.length > 3;
+    });
 
     if (validPositions.length === 0) return [];
 
-    // Extract and clean text from positions
-    const combinedText = validPositions
+    // Extract and clean text from positions with better error handling
+    const textParts = validPositions
       .map(pos => {
-        const summary = pos.summary?.trim() || '';
-        const quote = pos.quote?.trim() || '';
+        const summary = pos.summary && typeof pos.summary === 'string' ? pos.summary.trim() : '';
+        const quote = pos.quote && typeof pos.quote === 'string' ? pos.quote.trim() : '';
+        
         return [summary, quote]
           .filter(text => text.length > 3)
-          .map(text => text.replace(/[^\w\s\-àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/gi, ' '))
+          .map(text => {
+            try {
+              return text.replace(/[^\w\s\-àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/gi, ' ');
+            } catch (e) {
+              console.warn('Error processing text:', e);
+              return '';
+            }
+          })
           .join(' ');
       })
-      .filter(text => text.trim().length > 0)
-      .join(' ')
-      .toLowerCase();
+      .filter(text => text.trim().length > 0);
 
-    if (!combinedText) return [];
+    if (textParts.length === 0) return [];
+
+    const combinedText = textParts.join(' ').toLowerCase();
 
     // Dutch stop words
     const stopWords = new Set([
@@ -94,21 +109,31 @@ export const WordCloud = () => {
       'hoe', 'wanneer', 'waarom', 'omdat', 'sinds', 'tijdens', 'binnen', 'buiten', 'onder', 'boven'
     ]);
 
-    // Extract words and count frequency - fix type inference
-    const wordMatches = combinedText.match(/\b[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]{4,}\b/g);
-    const words: string[] = wordMatches ? wordMatches : [];
+    // Extract words and count frequency with better error handling
+    let wordMatches: string[] = [];
+    try {
+      const matches = combinedText.match(/\b[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]{4,}\b/g);
+      wordMatches = matches || [];
+    } catch (e) {
+      console.warn('Error matching words:', e);
+      return [];
+    }
     
     // Create word frequency map with explicit typing
     const wordCount: Record<string, number> = {};
     
-    words.forEach(word => {
-      const cleanWord = word.trim().toLowerCase();
-      if (cleanWord.length >= 4 && !stopWords.has(cleanWord)) {
-        wordCount[cleanWord] = (wordCount[cleanWord] || 0) + 1;
+    wordMatches.forEach(word => {
+      try {
+        const cleanWord = word.trim().toLowerCase();
+        if (cleanWord.length >= 4 && !stopWords.has(cleanWord)) {
+          wordCount[cleanWord] = (wordCount[cleanWord] || 0) + 1;
+        }
+      } catch (e) {
+        console.warn('Error processing word:', word, e);
       }
     });
 
-    // Create keyword objects
+    // Create keyword objects with validation
     const keywords = Object.entries(wordCount)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 30)
@@ -117,10 +142,41 @@ export const WordCloud = () => {
         size: Math.max(14, Math.min(36, count * 3 + 12)),
         count: count,
         color: getWordColor(index),
-      }));
+      }))
+      .filter(keyword => keyword.text && keyword.size && keyword.count); // Additional validation
 
     return keywords;
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Veelgebruikte termen</CardTitle>
+          <CardDescription>Laden van gegevens...</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <div className="text-muted-foreground">Gegevens worden geladen...</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Veelgebruikte termen</CardTitle>
+          <CardDescription>Er is een fout opgetreden bij het laden van gegevens</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <div className="text-muted-foreground">Kon gegevens niet laden</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const keywords = extractKeywords();
 
