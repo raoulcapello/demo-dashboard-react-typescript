@@ -46,21 +46,28 @@ export const WordCloud = () => {
     if (!words) return [];
 
     const wordCount = words.reduce((acc: Record<string, number>, word: string) => {
-      if (!stopWords.has(word)) {
-        acc[word] = (acc[word] || 0) + 1;
+      // Trim whitespace and ensure word is not empty
+      const cleanWord = word.trim();
+      if (cleanWord && cleanWord.length > 0 && !stopWords.has(cleanWord)) {
+        acc[cleanWord] = (acc[cleanWord] || 0) + 1;
       }
       return acc;
     }, {});
 
     return Object.entries(wordCount)
+      .filter(([word, count]) => {
+        // Additional filtering to ensure no empty values
+        return word && word.trim().length > 0 && count > 0;
+      })
       .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 30)
       .map(([word, count], index) => ({
-        text: word,
+        text: word.trim(), // Ensure text is trimmed
         size: Math.max(12, Math.min(32, (count as number) * 3)),
         count: count as number,
         color: `hsl(${210 + index * 12}, 70%, ${50 + ((count as number) * 5)}%)`,
-      }));
+      }))
+      .filter(item => item.text && item.text.length > 0); // Final safety check
   };
 
   const keywords = extractKeywords();
@@ -104,18 +111,20 @@ export const WordCloud = () => {
           <>
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
               {keywords.map((word, index) => (
-                <span
-                  key={index}
-                  className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
-                  style={{
-                    fontSize: `${word.size}px`,
-                    color: word.color,
-                    fontWeight: Math.floor(word.size / 4) * 100 + 300,
-                  }}
-                  title={`"${word.text}" - ${word.count} keer gebruikt`}
-                >
-                  {word.text}
-                </span>
+                word.text && word.text.trim() ? (
+                  <span
+                    key={index}
+                    className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
+                    style={{
+                      fontSize: `${word.size}px`,
+                      color: word.color,
+                      fontWeight: Math.floor(word.size / 4) * 100 + 300,
+                    }}
+                    title={`"${word.text}" - ${word.count} keer gebruikt`}
+                  >
+                    {word.text}
+                  </span>
+                ) : null
               ))}
             </div>
 
