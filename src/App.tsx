@@ -9,6 +9,7 @@ import ThemeDetail from "./pages/ThemeDetail";
 import Insights from "./pages/Insights";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import DemoNotification from "./components/DemoNotification";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <DemoNotification />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
