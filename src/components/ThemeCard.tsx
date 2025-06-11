@@ -1,8 +1,9 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Home, Leaf, GraduationCap, Heart, Users, TrendingUp, Shield, Globe } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Theme } from "@/types";
+import { themeConfig, ThemeSlug } from "@/config/themeConfig";
 
 interface ThemeCardProps {
   theme: Theme;
@@ -10,21 +11,9 @@ interface ThemeCardProps {
   onViewPositions: (slug: string) => void;
 }
 
-// Professional color palette avoiding orange, red, yellow - using blues, greens, and purples
-const themeConfig = {
-  'woningmarkt': { icon: Home, color: '#2563eb', bgColor: '#2563eb', borderColor: '#2563eb' }, // Blue
-  'klimaat': { icon: Leaf, color: '#059669', bgColor: '#059669', borderColor: '#059669' }, // Green
-  'onderwijs': { icon: GraduationCap, color: '#7c3aed', bgColor: '#7c3aed', borderColor: '#7c3aed' }, // Purple
-  'zorg': { icon: Heart, color: '#0891b2', bgColor: '#0891b2', borderColor: '#0891b2' }, // Cyan
-  'immigratie': { icon: Users, color: '#4338ca', bgColor: '#4338ca', borderColor: '#4338ca' }, // Indigo
-  'economie': { icon: TrendingUp, color: '#0d9488', bgColor: '#0d9488', borderColor: '#0d9488' }, // Teal
-  'veiligheid': { icon: Shield, color: '#6366f1', bgColor: '#6366f1', borderColor: '#6366f1' }, // Blue-violet
-  'europa': { icon: Globe, color: '#1e40af', bgColor: '#1e40af', borderColor: '#1e40af' }, // Dark blue
-};
-
 export const ThemeCard = ({ theme, themeIndex, onViewPositions }: ThemeCardProps) => {
-  const config = themeConfig[theme.slug as keyof typeof themeConfig] || {
-    icon: Home,
+  const config = themeConfig[theme.slug as ThemeSlug] || {
+    icon: themeConfig.woningmarkt.icon,
     color: 'hsl(var(--primary))',
     bgColor: 'hsl(var(--primary))',
     borderColor: 'hsl(var(--primary))'
