@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart as RechartsLineChart, XAxis, YAxis } from "recharts";
@@ -63,21 +62,18 @@ export const LineChart = () => {
             <Line
               dataKey="VVD"
               type="monotone"
-              stroke="var(--color-vvd)"
               strokeWidth={2}
               dot={false}
             />
             <Line
               dataKey="D66"
               type="monotone"
-              stroke="var(--color-d66)"
               strokeWidth={2}
               dot={false}
             />
             <Line
               dataKey="PVV"
               type="monotone"
-              stroke="var(--color-pvv)"
               strokeWidth={2}
               dot={false}
             />
