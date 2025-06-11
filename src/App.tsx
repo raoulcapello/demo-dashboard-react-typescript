@@ -10,6 +10,7 @@ import Insights from "./pages/Insights";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import DemoNotification from "./components/DemoNotification";
+import CookieNotification from "./components/CookieNotification";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <DemoNotification />
+      <CookieNotification />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
