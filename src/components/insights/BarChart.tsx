@@ -28,7 +28,7 @@ export const BarChart = () => {
       sum + pos.summary.length + pos.quote.length, 0) / (themePositions.length || 1);
     
     return {
-      theme: theme.title.length > 12 ? theme.title.substring(0, 10) + '...' : theme.title,
+      theme: theme.title, // Show full title instead of truncating
       fullTheme: theme.title,
       engagement: Math.round(avgContentLength / 10), // Normalize to reasonable scale
       positions: themePositions.length,
@@ -57,7 +57,7 @@ export const BarChart = () => {
             data={chartData}
             layout="vertical"
             margin={{
-              left: 20,
+              left: 30,
               right: 10,
             }}
           >
@@ -68,8 +68,8 @@ export const BarChart = () => {
               tickLine={false}
               tickMargin={8}
               axisLine={false}
-              width={45}
-              fontSize={11}
+              width={80}
+              fontSize={12}
             />
             <ChartTooltip
               cursor={false}

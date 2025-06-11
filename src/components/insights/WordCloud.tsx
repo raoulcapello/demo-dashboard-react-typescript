@@ -73,7 +73,7 @@ export const WordCloud = () => {
           Meest voorkomende woorden in partijstandpunten
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-1">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedTheme('all')}
