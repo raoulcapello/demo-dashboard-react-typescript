@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -83,8 +82,14 @@ export const Header = () => {
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
+          {/* Title - always on top on mobile, left side on desktop */}
+          <h1 className="text-2xl font-bold text-foreground text-center md:text-left">
+            Waar staan partijen voor?
+          </h1>
+          
+          {/* Navigation controls - below title on mobile, right side on desktop */}
+          <div className="flex items-center justify-between md:justify-end gap-4">
             {!isHomePage && (
               <Button
                 variant="ghost"
@@ -96,29 +101,26 @@ export const Header = () => {
                 Terug
               </Button>
             )}
-            <h1 className="text-2xl font-bold text-foreground">
-              Waar staan partijen voor?
-            </h1>
+            
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+                    <Link to="/">
+                      Thema's
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+                    <Link to="/insights">
+                      Inzichten
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
-          
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/">
-                    Thema's
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                  <Link to="/insights">
-                    Inzichten
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
         </div>
         
         {getBreadcrumbs() && (
