@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Breadcrumb,
@@ -131,6 +130,17 @@ export const Header = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+
+            {/* Admin access button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/admin')}
+              className="hover:bg-primary/10 hover:text-primary transition-all duration-300"
+              title="Admin Panel"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         
