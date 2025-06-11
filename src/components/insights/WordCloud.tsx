@@ -7,6 +7,7 @@ import { useState } from "react";
 export const WordCloud = () => {
   const [selectedTheme, setSelectedTheme] = useState<string>('all');
 
+  // Fetch themes and parties
   const { data: themes = [] } = useQuery({
     queryKey: ['themes'],
     queryFn: fetchThemes,
@@ -17,26 +18,50 @@ export const WordCloud = () => {
     queryFn: fetchParties,
   });
 
-  const { data: allPositions = [] } = useQuery({
-    queryKey: ['all-positions'],
+  // Fetch positions based on selected theme
+  const { data: positions = [] } = useQuery({
+    queryKey: ['positions-for-wordcloud', selectedTheme],
     queryFn: async () => {
-      const positions = await Promise.all(
-        themes.map(theme => fetchPositionsByTheme(theme.id))
-      );
-      return positions.flat();
+      console.log('Fetching positions for theme:', selectedTheme);
+      
+      if (selectedTheme === 'all') {
+        // Fetch all positions across all themes
+        const allPositions = await Promise.all(
+          themes.map(theme => fetchPositionsByTheme(theme.id))
+        );
+        const flatPositions = allPositions.flat();
+        console.log('All positions fetched:', flatPositions.length);
+        return flatPositions;
+      } else {
+        // Fetch positions for specific theme
+        const themePositions = await fetchPositionsByTheme(selectedTheme);
+        console.log(`Positions for theme ${selectedTheme}:`, themePositions.length);
+        return themePositions;
+      }
     },
-    enabled: themes.length > 0,
+    enabled: themes.length > 0, // Only run when themes are loaded
   });
 
+  /**
+   * Extract and process keywords from position data
+   * Returns array of keyword objects with text, size, count, and color
+   */
   const extractKeywords = () => {
-    const filteredPositions = selectedTheme === 'all' 
-      ? allPositions 
-      : allPositions.filter(pos => pos.themeId === selectedTheme);
-
-    console.log('Filtered positions count:', filteredPositions.length);
+    console.log('Processing positions:', positions.length);
+    console.log('Selected theme:', selectedTheme);
     
+    // Validate that we have the correct positions for the selected theme
+    if (selectedTheme !== 'all') {
+      const correctThemePositions = positions.filter(pos => pos.themeId === selectedTheme);
+      console.log(`Positions matching theme ${selectedTheme}:`, correctThemePositions.length);
+      
+      if (correctThemePositions.length !== positions.length) {
+        console.warn('Mismatch in theme filtering detected!');
+      }
+    }
+
     // Filter out positions with empty or whitespace-only summary/quote
-    const validPositions = filteredPositions.filter(pos => {
+    const validPositions = positions.filter(pos => {
       const hasValidSummary = pos.summary && pos.summary.trim().length > 0;
       const hasValidQuote = pos.quote && pos.quote.trim().length > 0;
       return hasValidSummary || hasValidQuote;
@@ -44,33 +69,37 @@ export const WordCloud = () => {
 
     console.log('Valid positions count:', validPositions.length);
 
-    // Concatenate text more carefully, ensuring no empty strings
+    // Safely concatenate text from valid positions
     const textParts = validPositions.map(pos => {
       const summary = pos.summary ? pos.summary.trim() : '';
       const quote = pos.quote ? pos.quote.trim() : '';
-      return [summary, quote].filter(text => text.length > 0).join(' ');
+      
+      // Only include non-empty text parts
+      const parts = [summary, quote].filter(text => text.length > 0);
+      return parts.join(' ');
     }).filter(text => text.length > 0);
 
-    const text = textParts.join(' ').toLowerCase();
-    console.log('Total text length:', text.length);
+    const combinedText = textParts.join(' ').toLowerCase();
+    console.log('Total text length:', combinedText.length);
     
-    // Common Dutch words to exclude
+    // Common Dutch stop words to exclude from word cloud
     const stopWords = new Set([
       'de', 'het', 'een', 'en', 'van', 'voor', 'in', 'op', 'met', 'door', 'naar', 'bij', 'te', 'aan', 'om',
       'uit', 'over', 'zijn', 'hebben', 'worden', 'moet', 'kunnen', 'meer', 'nederland', 'nederlanders',
       'mensen', 'alle', 'ook', 'dit', 'dat', 'we', 'onze', 'maar', 'als', 'niet', 'geen', 'wel'
     ]);
 
-    // Improved regex pattern to match only valid Dutch words
-    const words = text.match(/\b[a-zëïöüá-ÿ]{4,}\b/g);
+    // Extract words using robust regex pattern for Dutch text
+    const words = combinedText.match(/\b[a-zëïöüá-ÿ]{4,}\b/g);
     console.log('Extracted words count:', words ? words.length : 0);
     
-    if (!words) return [];
+    if (!words || words.length === 0) return [];
 
-    // More robust word counting with validation
+    // Count word frequencies with strict validation
     const wordCount = words.reduce((acc: Record<string, number>, word: string) => {
       const cleanWord = word.trim().toLowerCase();
-      // Ensure word is valid: not empty, not just punctuation, not a stop word
+      
+      // Strict validation: must be valid Dutch word, not a stop word
       if (cleanWord && 
           cleanWord.length >= 4 && 
           /^[a-zëïöüá-ÿ]+$/.test(cleanWord) && 
@@ -82,29 +111,29 @@ export const WordCloud = () => {
 
     console.log('Word count entries:', Object.keys(wordCount).length);
 
+    // Convert to keyword objects and sort by frequency
     const keywords = Object.entries(wordCount)
       .filter(([word, count]) => {
-        // Strict filtering: word must exist, be non-empty after trim, and have count > 0
-        const isValid = word && 
-                       typeof word === 'string' && 
-                       word.trim().length >= 4 && 
-                       count > 0 &&
-                       /^[a-zëïöüá-ÿ]+$/.test(word.trim());
-        return isValid;
+        // Final validation before creating keyword objects
+        return word && 
+               typeof word === 'string' && 
+               word.trim().length >= 4 && 
+               count > 0 &&
+               /^[a-zëïöüá-ÿ]+$/.test(word.trim());
       })
       .sort(([,a], [,b]) => (b as number) - (a as number))
-      .slice(0, 30)
+      .slice(0, 30) // Top 30 most frequent words
       .map(([word, count], index) => {
         const cleanWord = word.trim();
         return {
           text: cleanWord,
-          size: Math.max(12, Math.min(32, (count as number) * 3)),
+          size: Math.max(12, Math.min(32, (count as number) * 3)), // Dynamic font size
           count: count as number,
-          color: `hsl(${210 + index * 12}, 70%, ${50 + ((count as number) * 5)}%)`,
+          color: `hsl(${210 + index * 12}, 70%, ${50 + ((count as number) * 5)}%)`, // Dynamic color
         };
       })
       .filter(item => {
-        // Final validation before rendering
+        // Final safety check before rendering
         return item.text && 
                typeof item.text === 'string' && 
                item.text.length >= 4 &&
@@ -128,6 +157,7 @@ export const WordCloud = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className={keywords.length > 0 ? "space-y-1" : ""}>
+        {/* Theme filter buttons */}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedTheme('all')}
@@ -154,6 +184,7 @@ export const WordCloud = () => {
           ))}
         </div>
 
+        {/* Word cloud display */}
         {keywords.length > 0 ? (
           <>
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
@@ -174,7 +205,7 @@ export const WordCloud = () => {
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              Gebaseerd op {allPositions.length} partijstandpunten
+              Gebaseerd op {positions.length} partijstandpunten
               {selectedTheme !== 'all' && (
                 <span> voor {themes.find(t => t.id === selectedTheme)?.title}</span>
               )}
