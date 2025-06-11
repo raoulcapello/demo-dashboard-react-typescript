@@ -73,7 +73,7 @@ export const WordCloud = () => {
           Meest voorkomende woorden in partijstandpunten
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-1">
+      <CardContent className={keywords.length > 0 ? "space-y-1" : ""}>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedTheme('all')}
@@ -100,30 +100,38 @@ export const WordCloud = () => {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
-          {keywords.map((word, index) => (
-            <span
-              key={index}
-              className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
-              style={{
-                fontSize: `${word.size}px`,
-                color: word.color,
-                fontWeight: Math.floor(word.size / 4) * 100 + 300,
-              }}
-              title={`"${word.text}" - ${word.count} keer gebruikt`}
-            >
-              {word.text}
-            </span>
-          ))}
-        </div>
+        {keywords.length > 0 ? (
+          <>
+            <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
+              {keywords.map((word, index) => (
+                <span
+                  key={index}
+                  className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
+                  style={{
+                    fontSize: `${word.size}px`,
+                    color: word.color,
+                    fontWeight: Math.floor(word.size / 4) * 100 + 300,
+                  }}
+                  title={`"${word.text}" - ${word.count} keer gebruikt`}
+                >
+                  {word.text}
+                </span>
+              ))}
+            </div>
 
-        {keywords.length > 0 && (
-          <p className="text-xs text-muted-foreground text-center">
-            Gebaseerd op {allPositions.length} partijstandpunten
-            {selectedTheme !== 'all' && (
-              <span> voor {themes.find(t => t.id === selectedTheme)?.title}</span>
-            )}
-          </p>
+            <p className="text-xs text-muted-foreground text-center">
+              Gebaseerd op {allPositions.length} partijstandpunten
+              {selectedTheme !== 'all' && (
+                <span> voor {themes.find(t => t.id === selectedTheme)?.title}</span>
+              )}
+            </p>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-sm text-muted-foreground">
+              Geen termen gevonden voor de geselecteerde filter
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
