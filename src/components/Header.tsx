@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -38,12 +39,12 @@ export const Header = () => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/">Home</Link>
+                <Link to="/" className="hover:text-primary transition-colors">Home</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Inzichten</BreadcrumbPage>
+              <BreadcrumbPage className="text-primary font-medium">Inzichten</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -56,7 +57,11 @@ export const Header = () => {
         'woningmarkt': 'Woningmarkt',
         'klimaat': 'Klimaat',
         'onderwijs': 'Onderwijs',
-        'zorg': 'Zorg'
+        'zorg': 'Zorg',
+        'immigratie': 'Immigratie',
+        'economie': 'Economie',
+        'veiligheid': 'Veiligheid',
+        'europa': 'Europa'
       };
       
       return (
@@ -64,12 +69,12 @@ export const Header = () => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/">Home</Link>
+                <Link to="/" className="hover:text-primary transition-colors">Home</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{themeNames[slug] || 'Thema'}</BreadcrumbPage>
+              <BreadcrumbPage className="text-primary font-medium">{themeNames[slug] || 'Thema'}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -80,22 +85,22 @@ export const Header = () => {
   };
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <header className="border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
-          {/* Title - always on top on mobile, left side on desktop */}
-          <h1 className="text-2xl font-bold text-foreground text-center md:text-left">
+          {/* Title - enhanced with subtle gradient */}
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent text-center md:text-left">
             Waar staan partijen voor?
           </h1>
           
-          {/* Navigation controls - below title on mobile, right side on desktop */}
+          {/* Navigation controls - enhanced hover states */}
           <div className="flex items-center justify-between md:justify-end gap-4">
             {!isHomePage && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/')}
-                className="gap-2"
+                className="gap-2 hover:bg-primary/10 hover:text-primary transition-all duration-300"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Terug
@@ -105,14 +110,20 @@ export const Header = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+                  <NavigationMenuLink 
+                    className={`${navigationMenuTriggerStyle()} hover:bg-primary/10 hover:text-primary transition-all duration-300`} 
+                    asChild
+                  >
                     <Link to="/">
                       Thema's
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+                  <NavigationMenuLink 
+                    className={`${navigationMenuTriggerStyle()} hover:bg-primary/10 hover:text-primary transition-all duration-300`} 
+                    asChild
+                  >
                     <Link to="/insights">
                       Inzichten
                     </Link>
