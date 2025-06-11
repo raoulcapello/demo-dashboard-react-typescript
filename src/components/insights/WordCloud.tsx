@@ -94,19 +94,21 @@ export const WordCloud = () => {
       'hoe', 'wanneer', 'waarom', 'omdat', 'sinds', 'tijdens', 'binnen', 'buiten', 'onder', 'boven'
     ]);
 
-    // Extract words and count frequency
-    const words = combinedText.match(/\b[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]{4,}\b/g) || [];
+    // Extract words and count frequency - fix type inference
+    const wordMatches = combinedText.match(/\b[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]{4,}\b/g);
+    const words: string[] = wordMatches ? wordMatches : [];
     
-    // Create word frequency map with proper typing
-    const wordCount = words.reduce<Record<string, number>>((acc, word) => {
+    // Create word frequency map with explicit typing
+    const wordCount: Record<string, number> = {};
+    
+    words.forEach(word => {
       const cleanWord = word.trim().toLowerCase();
       if (cleanWord.length >= 4 && !stopWords.has(cleanWord)) {
-        acc[cleanWord] = (acc[cleanWord] || 0) + 1;
+        wordCount[cleanWord] = (wordCount[cleanWord] || 0) + 1;
       }
-      return acc;
-    }, {});
+    });
 
-    // Create keyword objects with proper type handling
+    // Create keyword objects
     const keywords = Object.entries(wordCount)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 30)
