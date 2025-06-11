@@ -50,12 +50,6 @@ export const WordCloud = () => {
       'hsl(30, 80%, 50%)',  // Orange
       'hsl(350, 70%, 50%)', // Red
       'hsl(200, 65%, 45%)', // Teal
-      'hsl(260, 70%, 55%)', // Violet
-      'hsl(40, 75%, 50%)',  // Yellow-orange
-      'hsl(320, 65%, 50%)', // Magenta
-      'hsl(180, 60%, 45%)', // Cyan
-      'hsl(120, 60%, 40%)', // Forest green
-      'hsl(240, 70%, 55%)', // Indigo
     ];
     
     return colorPalette[index % colorPalette.length];
@@ -65,7 +59,7 @@ export const WordCloud = () => {
    * Extract keywords from position data
    */
   const extractKeywords = () => {
-    // Filter valid positions
+    // Filter valid positions with proper content
     const validPositions = positions.filter(pos => 
       pos && (
         (pos.summary && pos.summary.trim().length > 3) ||
@@ -75,20 +69,22 @@ export const WordCloud = () => {
 
     if (validPositions.length === 0) return [];
 
-    // Extract and clean text
-    const textParts = validPositions.map(pos => {
-      const summary = pos.summary?.trim() || '';
-      const quote = pos.quote?.trim() || '';
-      return [summary, quote]
-        .filter(text => text.length > 3)
-        .map(text => text.replace(/[^\w\s\-àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/gi, ' '))
-        .join(' ');
-    }).filter(text => text.trim().length > 0);
+    // Extract and clean text from positions
+    const combinedText = validPositions
+      .map(pos => {
+        const summary = pos.summary?.trim() || '';
+        const quote = pos.quote?.trim() || '';
+        return [summary, quote]
+          .filter(text => text.length > 3)
+          .map(text => text.replace(/[^\w\s\-àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/gi, ' '))
+          .join(' ');
+      })
+      .filter(text => text.trim().length > 0)
+      .join(' ')
+      .toLowerCase();
 
-    if (textParts.length === 0) return [];
+    if (!combinedText) return [];
 
-    const combinedText = textParts.join(' ').toLowerCase();
-    
     // Dutch stop words
     const stopWords = new Set([
       'de', 'het', 'een', 'en', 'van', 'voor', 'in', 'op', 'met', 'door', 'naar', 'bij', 'te', 'aan', 'om',
@@ -101,7 +97,8 @@ export const WordCloud = () => {
     // Extract words and count frequency
     const words = combinedText.match(/\b[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]{4,}\b/g) || [];
     
-    const wordCount = words.reduce((acc: Record<string, number>, word: string) => {
+    // Create word frequency map with proper typing
+    const wordCount = words.reduce<Record<string, number>>((acc, word) => {
       const cleanWord = word.trim().toLowerCase();
       if (cleanWord.length >= 4 && !stopWords.has(cleanWord)) {
         acc[cleanWord] = (acc[cleanWord] || 0) + 1;
@@ -109,14 +106,14 @@ export const WordCloud = () => {
       return acc;
     }, {});
 
-    // Create keyword objects
+    // Create keyword objects with proper type handling
     const keywords = Object.entries(wordCount)
-      .sort(([,a], [,b]) => (b as number) - (a as number))
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 30)
       .map(([word, count], index) => ({
         text: word,
-        size: Math.max(14, Math.min(36, (count as number) * 3 + 12)),
-        count: count as number,
+        size: Math.max(14, Math.min(36, count * 3 + 12)),
+        count: count,
         color: getWordColor(index),
       }));
 
