@@ -60,10 +60,16 @@ const Admin = () => {
         </div>
         
         <Tabs defaultValue="agents" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="agents">LLM Agent Status</TabsTrigger>
-            <TabsTrigger value="review">Data Review & Override</TabsTrigger>
-            <TabsTrigger value="settings">Settings & Monitoring</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 h-auto">
+            <TabsTrigger value="agents" className="text-sm">
+              LLM Agent Status
+            </TabsTrigger>
+            <TabsTrigger value="review" className="text-sm">
+              Data Review & Override
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="text-sm">
+              Settings & Monitoring
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="agents" className="mt-6">
