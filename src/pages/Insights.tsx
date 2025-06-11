@@ -2,7 +2,7 @@
 import { Header } from "@/components/Header";
 import { RadarChart } from "@/components/insights/RadarChart";
 import { BarChart } from "@/components/insights/BarChart";
-import { LineChart } from "@/components/insights/LineChart";
+import { PartyHeatmap } from "@/components/insights/PartyHeatmap";
 import { WordCloud } from "@/components/insights/WordCloud";
 
 const Insights = () => {
@@ -21,8 +21,8 @@ const Insights = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RadarChart />
+          <PartyHeatmap />
           <BarChart />
-          <LineChart />
           <WordCloud />
         </div>
       </main>

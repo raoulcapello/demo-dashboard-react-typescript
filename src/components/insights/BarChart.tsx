@@ -2,76 +2,96 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, XAxis, YAxis } from "recharts";
-
-const data = [
-  {
-    party: "Partij A",
-    percentage: 78,
-    fill: "var(--color-partij-a)",
-  },
-  {
-    party: "Partij B",
-    percentage: 65,
-    fill: "var(--color-partij-b)",
-  },
-  {
-    party: "Partij C",
-    percentage: 82,
-    fill: "var(--color-partij-c)",
-  },
-];
-
-const chartConfig = {
-  percentage: {
-    label: "Percentage",
-  },
-  "partij-a": {
-    label: "Partij A",
-    color: "hsl(var(--chart-1))",
-  },
-  "partij-b": {
-    label: "Partij B",
-    color: "hsl(var(--chart-2))",
-  },
-  "partij-c": {
-    label: "Partij C",
-    color: "hsl(var(--chart-3))",
-  },
-};
+import { useQuery } from "@tanstack/react-query";
+import { fetchThemes, fetchPositionsByTheme } from "@/services/mockApi";
 
 export const BarChart = () => {
+  const { data: themes = [] } = useQuery({
+    queryKey: ['themes'],
+    queryFn: fetchThemes,
+  });
+
+  const { data: allPositions = [] } = useQuery({
+    queryKey: ['all-positions'],
+    queryFn: async () => {
+      const positions = await Promise.all(
+        themes.map(theme => fetchPositionsByTheme(theme.id))
+      );
+      return positions.flat();
+    },
+    enabled: themes.length > 0,
+  });
+
+  const chartData = themes.map(theme => {
+    const themePositions = allPositions.filter(pos => pos.themeId === theme.id);
+    const avgContentLength = themePositions.reduce((sum, pos) => 
+      sum + pos.summary.length + pos.quote.length, 0) / (themePositions.length || 1);
+    
+    return {
+      theme: theme.title.length > 12 ? theme.title.substring(0, 10) + '...' : theme.title,
+      fullTheme: theme.title,
+      engagement: Math.round(avgContentLength / 10), // Normalize to reasonable scale
+      positions: themePositions.length,
+      fill: `hsl(${210 + themes.indexOf(theme) * 30}, 70%, 50%)`,
+    };
+  }).sort((a, b) => b.engagement - a.engagement);
+
+  const chartConfig = {
+    engagement: {
+      label: "Engagement Score",
+    },
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Stemmen in lijn met programma</CardTitle>
+        <CardTitle>Thema engagement analyse</CardTitle>
         <CardDescription>
-          Percentage stemgedrag dat overeenkomt met verkiezingsprogramma
+          Engagement score gebaseerd op lengte en detail van standpunten
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <RechartsBarChart
             accessibilityLayer
-            data={data}
+            data={chartData}
             layout="vertical"
             margin={{
-              left: -20,
+              left: 80,
+              right: 20,
             }}
           >
-            <XAxis type="number" dataKey="percentage" hide />
+            <XAxis type="number" dataKey="engagement" hide />
             <YAxis
-              dataKey="party"
+              dataKey="theme"
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 8)}
+              width={70}
+              fontSize={12}
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <div className="bg-background border rounded-lg p-3 shadow-lg">
+                      <p className="font-medium">{data.fullTheme}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Engagement: {data.engagement}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Standpunten: {data.positions}
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
             />
-            <Bar dataKey="percentage" layout="horizontal" radius={4} />
+            <Bar dataKey="engagement" layout="horizontal" radius={4} />
           </RechartsBarChart>
         </ChartContainer>
       </CardContent>
