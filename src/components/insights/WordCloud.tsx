@@ -42,8 +42,10 @@ export const WordCloud = () => {
       'mensen', 'alle', 'ook', 'dit', 'dat', 'we', 'onze', 'maar', 'als', 'niet', 'geen', 'wel'
     ]);
 
-    const words = text.match(/\b[a-zëïöüá-ÿ]{4,}\b/g) || [];
-    const wordCount = words.reduce((acc: { [key: string]: number }, word) => {
+    const words = text.match(/\b[a-zëïöüá-ÿ]{4,}\b/g);
+    if (!words) return [];
+
+    const wordCount = words.reduce((acc: Record<string, number>, word: string) => {
       if (!stopWords.has(word)) {
         acc[word] = (acc[word] || 0) + 1;
       }
@@ -51,13 +53,13 @@ export const WordCloud = () => {
     }, {});
 
     return Object.entries(wordCount)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 30)
       .map(([word, count], index) => ({
         text: word,
-        size: Math.max(12, Math.min(32, count * 3)),
-        count,
-        color: `hsl(${210 + index * 12}, 70%, ${50 + (count * 5)}%)`,
+        size: Math.max(12, Math.min(32, (count as number) * 3)),
+        count: count as number,
+        color: `hsl(${210 + index * 12}, 70%, ${50 + ((count as number) * 5)}%)`,
       }));
   };
 
