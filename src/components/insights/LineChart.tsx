@@ -4,25 +4,25 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { CartesianGrid, Line, LineChart as RechartsLineChart, XAxis, YAxis } from "recharts";
 
 const data = [
-  { month: "Jan", "Partij A": 12, "Partij B": 8, "Partij C": 15 },
-  { month: "Feb", "Partij A": 15, "Partij B": 6, "Partij C": 18 },
-  { month: "Mrt", "Partij A": 18, "Partij B": 10, "Partij C": 22 },
-  { month: "Apr", "Partij A": 22, "Partij B": 14, "Partij C": 25 },
-  { month: "Mei", "Partij A": 28, "Partij B": 18, "Partij C": 30 },
-  { month: "Jun", "Partij A": 25, "Partij B": 16, "Partij C": 28 },
+  { month: "Jan", "VVD": 12, "D66": 8, "PVV": 15 },
+  { month: "Feb", "VVD": 15, "D66": 6, "PVV": 18 },
+  { month: "Mrt", "VVD": 18, "D66": 10, "PVV": 22 },
+  { month: "Apr", "VVD": 22, "D66": 14, "PVV": 25 },
+  { month: "Mei", "VVD": 28, "D66": 18, "PVV": 30 },
+  { month: "Jun", "VVD": 25, "D66": 16, "PVV": 28 },
 ];
 
 const chartConfig = {
-  "Partij A": {
-    label: "Partij A",
+  VVD: {
+    label: "VVD",
     color: "hsl(var(--chart-1))",
   },
-  "Partij B": {
-    label: "Partij B",
+  D66: {
+    label: "D66",
     color: "hsl(var(--chart-2))",
   },
-  "Partij C": {
-    label: "Partij C",
+  PVV: {
+    label: "PVV",
     color: "hsl(var(--chart-3))",
   },
 };
@@ -61,23 +61,23 @@ export const LineChart = () => {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line
-              dataKey="Partij A"
+              dataKey="VVD"
               type="monotone"
-              stroke="var(--color-partij-a)"
+              stroke="var(--color-vvd)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="Partij B"
+              dataKey="D66"
               type="monotone"
-              stroke="var(--color-partij-b)"
+              stroke="var(--color-d66)"
               strokeWidth={2}
               dot={false}
             />
             <Line
-              dataKey="Partij C"
+              dataKey="PVV"
               type="monotone"
-              stroke="var(--color-partij-c)"
+              stroke="var(--color-pvv)"
               strokeWidth={2}
               dot={false}
             />
