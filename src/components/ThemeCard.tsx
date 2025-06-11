@@ -10,16 +10,16 @@ interface ThemeCardProps {
   onViewPositions: (slug: string) => void;
 }
 
-// Theme-specific configuration with colors and icons
+// Professional color palette avoiding orange, red, yellow - using blues, greens, and purples
 const themeConfig = {
-  'woningmarkt': { icon: Home, color: 'hsl(var(--chart-1))', bgColor: 'hsl(var(--chart-1))', borderColor: 'hsl(var(--chart-1))' },
-  'klimaat': { icon: Leaf, color: 'hsl(var(--chart-2))', bgColor: 'hsl(var(--chart-2))', borderColor: 'hsl(var(--chart-2))' },
-  'onderwijs': { icon: GraduationCap, color: 'hsl(var(--chart-3))', bgColor: 'hsl(var(--chart-3))', borderColor: 'hsl(var(--chart-3))' },
-  'zorg': { icon: Heart, color: 'hsl(var(--chart-4))', bgColor: 'hsl(var(--chart-4))', borderColor: 'hsl(var(--chart-4))' },
-  'immigratie': { icon: Users, color: 'hsl(var(--chart-5))', bgColor: 'hsl(var(--chart-5))', borderColor: 'hsl(var(--chart-5))' },
-  'economie': { icon: TrendingUp, color: 'hsl(var(--chart-1))', bgColor: 'hsl(var(--chart-1))', borderColor: 'hsl(var(--chart-1))' },
-  'veiligheid': { icon: Shield, color: 'hsl(var(--chart-2))', bgColor: 'hsl(var(--chart-2))', borderColor: 'hsl(var(--chart-2))' },
-  'europa': { icon: Globe, color: 'hsl(var(--chart-3))', bgColor: 'hsl(var(--chart-3))', borderColor: 'hsl(var(--chart-3))' },
+  'woningmarkt': { icon: Home, color: '#2563eb', bgColor: '#2563eb', borderColor: '#2563eb' }, // Blue
+  'klimaat': { icon: Leaf, color: '#059669', bgColor: '#059669', borderColor: '#059669' }, // Green
+  'onderwijs': { icon: GraduationCap, color: '#7c3aed', bgColor: '#7c3aed', borderColor: '#7c3aed' }, // Purple
+  'zorg': { icon: Heart, color: '#0891b2', bgColor: '#0891b2', borderColor: '#0891b2' }, // Cyan
+  'immigratie': { icon: Users, color: '#4338ca', bgColor: '#4338ca', borderColor: '#4338ca' }, // Indigo
+  'economie': { icon: TrendingUp, color: '#0d9488', bgColor: '#0d9488', borderColor: '#0d9488' }, // Teal
+  'veiligheid': { icon: Shield, color: '#6366f1', bgColor: '#6366f1', borderColor: '#6366f1' }, // Blue-violet
+  'europa': { icon: Globe, color: '#1e40af', bgColor: '#1e40af', borderColor: '#1e40af' }, // Dark blue
 };
 
 export const ThemeCard = ({ theme, themeIndex, onViewPositions }: ThemeCardProps) => {
