@@ -28,6 +28,10 @@ Below are some screenshots demonstrating the main features and pages of this pro
 
 ---
 
+![Word Cloud](Images/Insights%20bottom.png)
+
+---
+
 **Party Comparison**
 
 ![Party Comparison](Images/Party%20Comparison.png)
