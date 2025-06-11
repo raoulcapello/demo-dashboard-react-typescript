@@ -1,3 +1,4 @@
+
 import { Theme, Party, Position } from '../types';
 
 export const themes: Theme[] = [
@@ -106,6 +107,14 @@ export const positions: Position[] = [
     quote: 'Alle nieuwe woningen energieneutraal en huurprijzen koppelen aan WOZ-waarde.',
     sourceUrl: 'https://groenlinks.nl/programma/wonen'
   },
+  {
+    id: '33',
+    themeId: '1',
+    partyId: '10', // Volt
+    summary: 'Europese samenwerking en innovatieve woningbouw',
+    quote: 'Leren van beste practices in Europa, modulaire bouw stimuleren en digitale platforms voor transparante woningmarkt.',
+    sourceUrl: 'https://www.voltnederland.org/programma/wonen'
+  },
 
   // Klimaat
   {
@@ -147,6 +156,14 @@ export const positions: Position[] = [
     summary: 'Ambitieus klimaatbeleid en groene banen',
     quote: 'Nederland klimaatneutraal in 2030 door massale investeringen in groene energie en natuur.',
     sourceUrl: 'https://groenlinks.nl/programma/klimaat'
+  },
+  {
+    id: '34',
+    themeId: '2',
+    partyId: '10', // Volt
+    summary: 'European Green Deal en carbon pricing',
+    quote: 'Klimaatneutraal Europa in 2035 door Europese carbon tax, grensbelasting op CO2 en massale investeringen in cleantech.',
+    sourceUrl: 'https://www.voltnederland.org/programma/klimaat'
   },
 
   // Onderwijs
@@ -224,6 +241,14 @@ export const positions: Position[] = [
     quote: 'Zorg gebaseerd op christelijke waarden, met speciale aandacht voor kwetsbare ouderen.',
     sourceUrl: 'https://www.christenunie.nl/programma'
   },
+  {
+    id: '35',
+    themeId: '4',
+    partyId: '10', // Volt
+    summary: 'Digitale zorg en Europese gezondheidsdata',
+    quote: 'AI en telemedicine voor betere zorg, Europese samenwerking bij medicijnonderzoek en gedeelde gezondheidsdata.',
+    sourceUrl: 'https://www.voltnederland.org/programma/zorg'
+  },
 
   // Immigratie
   {
@@ -258,6 +283,14 @@ export const positions: Position[] = [
     quote: 'Massale immigratie bedreigt onze cultuur. Remigratiebeleid en grenzen dicht.',
     sourceUrl: 'https://www.fvd.nl/programma'
   },
+  {
+    id: '36',
+    themeId: '5',
+    partyId: '10', // Volt
+    summary: 'Europees migratiebeleid en integratie door onderwijs',
+    quote: 'Gemeenschappelijk Europees asielbeleid, legale migratieroutes en integratie via taalonderwijs en arbeidsmarkt.',
+    sourceUrl: 'https://www.voltnederland.org/programma/migratie'
+  },
 
   // Economie
   {
@@ -284,6 +317,14 @@ export const positions: Position[] = [
     quote: 'Minimumloon omhoog, maximumloon voor bestuurders en vermogensbelasting invoeren.',
     sourceUrl: 'https://www.sp.nl/programma/economie'
   },
+  {
+    id: '37',
+    themeId: '6',
+    partyId: '10', // Volt
+    summary: 'Digitale economie en Universal Basic Income pilot',
+    quote: 'Europese digitale single market, startup ecosysteem en pilotprojecten voor basisinkomen en 4-daagse werkweek.',
+    sourceUrl: 'https://www.voltnederland.org/programma/economie'
+  },
 
   // Veiligheid
   {
@@ -309,6 +350,14 @@ export const positions: Position[] = [
     summary: 'Lokale veiligheid en gemeenschapspolitie',
     quote: 'Wijkagenten terug en samenwerking tussen politie en lokale gemeenschappen.',
     sourceUrl: 'https://www.cda.nl/programma/veiligheid'
+  },
+  {
+    id: '38',
+    themeId: '7',
+    partyId: '10', // Volt
+    summary: 'Europese defensie en cybersecurity',
+    quote: 'Gemeenschappelijk Europees leger, investeringen in cybersecurity en bescherming van democratische instituties.',
+    sourceUrl: 'https://www.voltnederland.org/programma/veiligheid'
   },
 
   // Europa
