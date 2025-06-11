@@ -33,7 +33,7 @@ export const BarChart = () => {
           <CardTitle>Thema engagement analyse</CardTitle>
           <CardDescription>Laden van gegevens...</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
+        <CardContent className="flex items-center justify-center h-[200px]">
           <div className="text-muted-foreground">Gegevens worden geladen...</div>
         </CardContent>
       </Card>
@@ -48,7 +48,7 @@ export const BarChart = () => {
           <CardTitle>Thema engagement analyse</CardTitle>
           <CardDescription>Er is een fout opgetreden bij het laden van gegevens</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
+        <CardContent className="flex items-center justify-center h-[200px]">
           <div className="text-muted-foreground">Kon gegevens niet laden</div>
         </CardContent>
       </Card>
@@ -86,12 +86,15 @@ export const BarChart = () => {
           <CardTitle>Thema engagement analyse</CardTitle>
           <CardDescription>Geen gegevens beschikbaar voor analyse</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
+        <CardContent className="flex items-center justify-center h-[200px]">
           <div className="text-muted-foreground">Geen engagement gegevens gevonden</div>
         </CardContent>
       </Card>
     );
   }
+
+  // Calculate dynamic height based on number of data items
+  const chartHeight = Math.max(300, chartData.length * 50 + 100);
 
   const chartConfig = {
     engagement: {
@@ -108,54 +111,59 @@ export const BarChart = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <RechartsBarChart
-            accessibilityLayer
-            data={chartData}
-            layout="vertical"
-            margin={{
-              left: 30,
-              right: 10,
-            }}
-          >
-            <XAxis 
-              type="number" 
-              dataKey="engagement" 
-              hide 
-              domain={[0, 'dataMax']}
-            />
-            <YAxis
-              dataKey="theme"
-              type="category"
-              tickLine={false}
-              tickMargin={8}
-              axisLine={false}
-              width={80}
-              fontSize={12}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  const data = payload[0].payload;
-                  return (
-                    <div className="bg-background border rounded-lg p-3 shadow-lg">
-                      <p className="font-medium">{data.fullTheme}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Engagement: {data.engagement}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Standpunten: {data.positions}
-                      </p>
-                    </div>
-                  );
-                }
-                return null;
+        <div style={{ height: `${chartHeight}px` }}>
+          <ChartContainer config={chartConfig} className="h-full w-full">
+            <RechartsBarChart
+              accessibilityLayer
+              data={chartData}
+              layout="vertical"
+              margin={{
+                left: 30,
+                right: 10,
+                top: 10,
+                bottom: 10,
               }}
-            />
-            <Bar dataKey="engagement" layout="horizontal" radius={4} />
-          </RechartsBarChart>
-        </ChartContainer>
+              height={chartHeight - 20}
+            >
+              <XAxis 
+                type="number" 
+                dataKey="engagement" 
+                hide 
+                domain={[0, 'dataMax']}
+              />
+              <YAxis
+                dataKey="theme"
+                type="category"
+                tickLine={false}
+                tickMargin={8}
+                axisLine={false}
+                width={80}
+                fontSize={12}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-background border rounded-lg p-3 shadow-lg">
+                        <p className="font-medium">{data.fullTheme}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Engagement: {data.engagement}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Standpunten: {data.positions}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Bar dataKey="engagement" layout="horizontal" radius={4} />
+            </RechartsBarChart>
+          </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );
