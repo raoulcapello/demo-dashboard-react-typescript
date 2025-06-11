@@ -48,6 +48,45 @@ export const WordCloud = () => {
   const positions = selectedTheme === 'all' ? allPositions : themePositions;
 
   /**
+   * Predefined color palette with guaranteed contrast
+   * Uses theme-aware colors that work well against card backgrounds
+   */
+  const getWordColor = (index: number, count: number) => {
+    const colorPalette = [
+      'hsl(220, 70%, 50%)', // Blue
+      'hsl(160, 60%, 45%)', // Green
+      'hsl(280, 65%, 55%)', // Purple
+      'hsl(30, 80%, 50%)',  // Orange
+      'hsl(350, 70%, 50%)', // Red
+      'hsl(200, 65%, 45%)', // Teal
+      'hsl(260, 70%, 55%)', // Violet
+      'hsl(40, 75%, 50%)',  // Yellow-orange
+      'hsl(320, 65%, 50%)', // Magenta
+      'hsl(180, 60%, 45%)', // Cyan
+      'hsl(120, 60%, 40%)', // Forest green
+      'hsl(240, 70%, 55%)', // Indigo
+    ];
+    
+    // Cycle through the palette
+    const baseColor = colorPalette[index % colorPalette.length];
+    
+    // Adjust saturation and lightness based on word frequency for variation
+    const saturationAdjust = Math.min(10, count * 2);
+    const lightnessAdjust = Math.min(5, count);
+    
+    // Parse HSL values and apply adjustments
+    const hslMatch = baseColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (hslMatch) {
+      const [, h, s, l] = hslMatch.map(Number);
+      const adjustedS = Math.min(100, s + saturationAdjust);
+      const adjustedL = Math.max(35, Math.min(65, l + lightnessAdjust)); // Keep lightness in safe range
+      return `hsl(${h}, ${adjustedS}%, ${adjustedL}%)`;
+    }
+    
+    return baseColor; // Fallback to original color
+  };
+
+  /**
    * Enhanced keyword extraction with comprehensive validation
    * Returns array of validated keyword objects with text, size, count, and color
    */
@@ -142,7 +181,7 @@ export const WordCloud = () => {
       return [];
     }
 
-    // Enhanced keyword object creation with validation
+    // Enhanced keyword object creation with improved color assignment
     const keywords = Object.entries(wordCount)
       .filter(([word, count]) => {
         // Final validation before creating keyword objects
@@ -160,12 +199,12 @@ export const WordCloud = () => {
         const cleanWord = word.trim();
         const wordCount = count as number;
         
-        // Ensure we create valid keyword objects
+        // Ensure we create valid keyword objects with contrasting colors
         return {
           text: cleanWord,
           size: Math.max(14, Math.min(36, wordCount * 3 + 12)), // Enhanced size calculation
           count: wordCount,
-          color: `hsl(${210 + index * 8}, ${60 + (wordCount * 2)}%, ${45 + (wordCount * 3)}%)`, // Enhanced color
+          color: getWordColor(index, wordCount), // Use the new color function
         };
       })
       .filter(item => {
@@ -176,6 +215,7 @@ export const WordCloud = () => {
                item.text.trim().length >= 4 &&
                item.size && 
                item.count &&
+               item.color &&
                /^[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]+$/.test(item.text.trim());
       });
 
@@ -223,7 +263,7 @@ export const WordCloud = () => {
           ))}
         </div>
 
-        {/* Enhanced word cloud display with defensive rendering */}
+        {/* Enhanced word cloud display with contrasting colors */}
         {keywords.length > 0 ? (
           <>
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
@@ -238,10 +278,10 @@ export const WordCloud = () => {
                   return (
                     <span
                       key={`${word.text}-${index}-${word.count}`}
-                      className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
+                      className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:opacity-80"
                       style={{
                         fontSize: `${word.size || 16}px`,
-                        color: word.color || 'currentColor',
+                        color: word.color,
                         fontWeight: Math.floor((word.size || 16) / 4) * 100 + 300,
                       }}
                       title={`"${word.text}" - ${word.count} keer gebruikt`}
