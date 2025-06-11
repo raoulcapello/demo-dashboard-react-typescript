@@ -15,7 +15,7 @@ const DemoNotification = () => {
     
     if (!hasBeenDismissed) {
       // Show toast with action button to dismiss
-      toast.info('Dit is een demo gebaseerd op nep-data', {
+      toast.info('Dit is een demo gebaseerd op nep-data.', {
         duration: Infinity, // Keep toast visible until user dismisses it
         action: {
           label: 'Okay',
