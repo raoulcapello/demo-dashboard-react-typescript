@@ -73,7 +73,7 @@ export const WordCloud = () => {
           Meest voorkomende woorden in partijstandpunten
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-2">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedTheme('all')}
@@ -100,7 +100,7 @@ export const WordCloud = () => {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 p-4 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
+        <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
           {keywords.map((word, index) => (
             <span
               key={index}

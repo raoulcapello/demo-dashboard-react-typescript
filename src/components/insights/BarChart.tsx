@@ -57,8 +57,8 @@ export const BarChart = () => {
             data={chartData}
             layout="vertical"
             margin={{
-              left: 80,
-              right: 20,
+              left: 20,
+              right: 10,
             }}
           >
             <XAxis type="number" dataKey="engagement" hide />
@@ -66,10 +66,10 @@ export const BarChart = () => {
               dataKey="theme"
               type="category"
               tickLine={false}
-              tickMargin={10}
+              tickMargin={8}
               axisLine={false}
-              width={70}
-              fontSize={12}
+              width={45}
+              fontSize={11}
             />
             <ChartTooltip
               cursor={false}
