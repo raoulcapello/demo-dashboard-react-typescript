@@ -18,7 +18,7 @@ const DemoNotification = () => {
       toast.info('Dit is een demo gebaseerd op nep-data', {
         duration: Infinity, // Keep toast visible until user dismisses it
         action: {
-          label: 'Ik begrijp het',
+          label: 'Okay',
           onClick: () => {
             // Mark notification as dismissed in localStorage
             localStorage.setItem(STORAGE_KEY, 'true');
