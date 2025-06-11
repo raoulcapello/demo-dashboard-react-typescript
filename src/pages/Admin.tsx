@@ -1,14 +1,33 @@
 
+import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AgentStatus } from "@/components/admin/AgentStatus";
 import { DataReview } from "@/components/admin/DataReview";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { Shield } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Admin = () => {
+  const { toast } = useToast();
+  
   // Mock authentication check - in real app this would be from auth context
   const isAdmin = true;
+
+  // Show one-time info toast about demo nature
+  useEffect(() => {
+    const hasSeenAdminToast = localStorage.getItem('hasSeenAdminToast');
+    
+    if (!hasSeenAdminToast) {
+      toast({
+        title: "Demo Admin Panel",
+        description: "This is a demonstration admin panel and is not behind authentication. In a real application, this would require proper admin credentials.",
+        duration: 8000,
+      });
+      
+      localStorage.setItem('hasSeenAdminToast', 'true');
+    }
+  }, [toast]);
 
   if (!isAdmin) {
     return (
