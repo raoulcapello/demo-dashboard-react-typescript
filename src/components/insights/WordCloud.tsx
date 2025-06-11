@@ -18,92 +18,118 @@ export const WordCloud = () => {
     queryFn: fetchParties,
   });
 
-  // Fetch positions based on selected theme
-  const { data: positions = [] } = useQuery({
-    queryKey: ['positions-for-wordcloud', selectedTheme],
+  // Fetch positions based on selected theme using separate queries
+  const { data: allPositions = [] } = useQuery({
+    queryKey: ['all-positions-wordcloud'],
     queryFn: async () => {
-      console.log('Fetching positions for theme:', selectedTheme);
-      
-      if (selectedTheme === 'all') {
-        // Fetch all positions across all themes
-        const allPositions = await Promise.all(
-          themes.map(theme => fetchPositionsByTheme(theme.id))
-        );
-        const flatPositions = allPositions.flat();
-        console.log('All positions fetched:', flatPositions.length);
-        return flatPositions;
-      } else {
-        // Fetch positions for specific theme
-        const themePositions = await fetchPositionsByTheme(selectedTheme);
-        console.log(`Positions for theme ${selectedTheme}:`, themePositions.length);
-        return themePositions;
-      }
+      console.log('Fetching all positions for word cloud');
+      const allPositions = await Promise.all(
+        themes.map(theme => fetchPositionsByTheme(theme.id))
+      );
+      const flatPositions = allPositions.flat();
+      console.log('All positions fetched:', flatPositions.length);
+      return flatPositions;
     },
-    enabled: themes.length > 0, // Only run when themes are loaded
+    enabled: themes.length > 0 && selectedTheme === 'all',
   });
 
+  const { data: themePositions = [] } = useQuery({
+    queryKey: ['theme-positions-wordcloud', selectedTheme],
+    queryFn: async () => {
+      console.log('Fetching positions for theme:', selectedTheme);
+      const themePositions = await fetchPositionsByTheme(selectedTheme);
+      console.log(`Positions for theme ${selectedTheme}:`, themePositions.length);
+      return themePositions;
+    },
+    enabled: selectedTheme !== 'all',
+  });
+
+  // Use the correct positions based on selected theme
+  const positions = selectedTheme === 'all' ? allPositions : themePositions;
+
   /**
-   * Extract and process keywords from position data
-   * Returns array of keyword objects with text, size, count, and color
+   * Enhanced keyword extraction with comprehensive validation
+   * Returns array of validated keyword objects with text, size, count, and color
    */
   const extractKeywords = () => {
     console.log('Processing positions:', positions.length);
     console.log('Selected theme:', selectedTheme);
     
-    // Validate that we have the correct positions for the selected theme
-    if (selectedTheme !== 'all') {
-      const correctThemePositions = positions.filter(pos => pos.themeId === selectedTheme);
-      console.log(`Positions matching theme ${selectedTheme}:`, correctThemePositions.length);
-      
-      if (correctThemePositions.length !== positions.length) {
-        console.warn('Mismatch in theme filtering detected!');
-      }
-    }
-
-    // Filter out positions with empty or whitespace-only summary/quote
+    // Enhanced validation: filter out positions with empty or invalid content
     const validPositions = positions.filter(pos => {
-      const hasValidSummary = pos.summary && pos.summary.trim().length > 0;
-      const hasValidQuote = pos.quote && pos.quote.trim().length > 0;
+      if (!pos || typeof pos !== 'object') return false;
+      
+      const hasValidSummary = pos.summary && 
+                             typeof pos.summary === 'string' && 
+                             pos.summary.trim().length > 3;
+      const hasValidQuote = pos.quote && 
+                           typeof pos.quote === 'string' && 
+                           pos.quote.trim().length > 3;
+      
       return hasValidSummary || hasValidQuote;
     });
 
     console.log('Valid positions count:', validPositions.length);
 
-    // Safely concatenate text from valid positions
+    if (validPositions.length === 0) {
+      console.log('No valid positions found');
+      return [];
+    }
+
+    // Enhanced text processing with better cleaning
     const textParts = validPositions.map(pos => {
       const summary = pos.summary ? pos.summary.trim() : '';
       const quote = pos.quote ? pos.quote.trim() : '';
       
-      // Only include non-empty text parts
-      const parts = [summary, quote].filter(text => text.length > 0);
-      return parts.join(' ');
-    }).filter(text => text.length > 0);
+      // Clean and validate text parts
+      const cleanParts = [summary, quote]
+        .filter(text => text && typeof text === 'string' && text.length > 3)
+        .map(text => text.replace(/[^\w\s\-àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/gi, ' '))
+        .filter(text => text.trim().length > 0);
+      
+      return cleanParts.join(' ');
+    }).filter(text => text && text.trim().length > 0);
+
+    if (textParts.length === 0) {
+      console.log('No valid text parts found');
+      return [];
+    }
 
     const combinedText = textParts.join(' ').toLowerCase();
     console.log('Total text length:', combinedText.length);
     
-    // Common Dutch stop words to exclude from word cloud
+    // Enhanced Dutch stop words list
     const stopWords = new Set([
       'de', 'het', 'een', 'en', 'van', 'voor', 'in', 'op', 'met', 'door', 'naar', 'bij', 'te', 'aan', 'om',
       'uit', 'over', 'zijn', 'hebben', 'worden', 'moet', 'kunnen', 'meer', 'nederland', 'nederlanders',
-      'mensen', 'alle', 'ook', 'dit', 'dat', 'we', 'onze', 'maar', 'als', 'niet', 'geen', 'wel'
+      'mensen', 'alle', 'ook', 'dit', 'dat', 'we', 'onze', 'maar', 'als', 'niet', 'geen', 'wel', 'die',
+      'zij', 'hun', 'haar', 'hem', 'hen', 'ons', 'jullie', 'mij', 'jij', 'jou', 'waar', 'wat', 'wie',
+      'hoe', 'wanneer', 'waarom', 'omdat', 'sinds', 'tijdens', 'binnen', 'buiten', 'onder', 'boven'
     ]);
 
-    // Extract words using robust regex pattern for Dutch text
-    const words = combinedText.match(/\b[a-zëïöüá-ÿ]{4,}\b/g);
+    // Enhanced word extraction with stricter validation
+    const words = combinedText.match(/\b[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]{4,}\b/g);
     console.log('Extracted words count:', words ? words.length : 0);
     
-    if (!words || words.length === 0) return [];
+    if (!words || words.length === 0) {
+      console.log('No words extracted from text');
+      return [];
+    }
 
-    // Count word frequencies with strict validation
+    // Enhanced word counting with comprehensive validation
     const wordCount = words.reduce((acc: Record<string, number>, word: string) => {
+      if (!word || typeof word !== 'string') return acc;
+      
       const cleanWord = word.trim().toLowerCase();
       
-      // Strict validation: must be valid Dutch word, not a stop word
+      // Comprehensive validation for Dutch words
       if (cleanWord && 
           cleanWord.length >= 4 && 
-          /^[a-zëïöüá-ÿ]+$/.test(cleanWord) && 
-          !stopWords.has(cleanWord)) {
+          cleanWord.length <= 20 && // Reasonable max length
+          /^[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]+$/.test(cleanWord) && 
+          !stopWords.has(cleanWord) &&
+          !cleanWord.match(/^\d+$/) && // No pure numbers
+          cleanWord !== cleanWord.charAt(0).repeat(cleanWord.length)) { // No repeated characters
         acc[cleanWord] = (acc[cleanWord] || 0) + 1;
       }
       return acc;
@@ -111,37 +137,50 @@ export const WordCloud = () => {
 
     console.log('Word count entries:', Object.keys(wordCount).length);
 
-    // Convert to keyword objects and sort by frequency
+    if (Object.keys(wordCount).length === 0) {
+      console.log('No valid words after filtering');
+      return [];
+    }
+
+    // Enhanced keyword object creation with validation
     const keywords = Object.entries(wordCount)
       .filter(([word, count]) => {
         // Final validation before creating keyword objects
         return word && 
                typeof word === 'string' && 
                word.trim().length >= 4 && 
+               count && 
+               typeof count === 'number' &&
                count > 0 &&
-               /^[a-zëïöüá-ÿ]+$/.test(word.trim());
+               /^[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]+$/.test(word.trim());
       })
       .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 30) // Top 30 most frequent words
       .map(([word, count], index) => {
         const cleanWord = word.trim();
+        const wordCount = count as number;
+        
+        // Ensure we create valid keyword objects
         return {
           text: cleanWord,
-          size: Math.max(12, Math.min(32, (count as number) * 3)), // Dynamic font size
-          count: count as number,
-          color: `hsl(${210 + index * 12}, 70%, ${50 + ((count as number) * 5)}%)`, // Dynamic color
+          size: Math.max(14, Math.min(36, wordCount * 3 + 12)), // Enhanced size calculation
+          count: wordCount,
+          color: `hsl(${210 + index * 8}, ${60 + (wordCount * 2)}%, ${45 + (wordCount * 3)}%)`, // Enhanced color
         };
       })
       .filter(item => {
-        // Final safety check before rendering
-        return item.text && 
+        // Final safety check before returning
+        return item && 
+               item.text && 
                typeof item.text === 'string' && 
-               item.text.length >= 4 &&
-               /^[a-zëïöüá-ÿ]+$/.test(item.text);
+               item.text.trim().length >= 4 &&
+               item.size && 
+               item.count &&
+               /^[a-zëïöüáéíóúàèìòùâêîôûäëïöüÿç]+$/.test(item.text.trim());
       });
 
     console.log('Final keywords count:', keywords.length);
-    console.log('Keywords:', keywords.map(k => k.text));
+    console.log('Final keywords:', keywords.map(k => k.text));
 
     return keywords;
   };
@@ -184,24 +223,35 @@ export const WordCloud = () => {
           ))}
         </div>
 
-        {/* Word cloud display */}
+        {/* Enhanced word cloud display with defensive rendering */}
         {keywords.length > 0 ? (
           <>
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 min-h-[200px] bg-gradient-to-br from-background to-secondary/20 rounded-lg">
-              {keywords.map((word, index) => (
-                <span
-                  key={`${word.text}-${index}`}
-                  className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
-                  style={{
-                    fontSize: `${word.size}px`,
-                    color: word.color,
-                    fontWeight: Math.floor(word.size / 4) * 100 + 300,
-                  }}
-                  title={`"${word.text}" - ${word.count} keer gebruikt`}
-                >
-                  {word.text}
-                </span>
-              ))}
+              {keywords
+                .filter(word => word && word.text && word.text.trim().length >= 4)
+                .map((word, index) => {
+                  // Additional safety check during rendering
+                  if (!word || !word.text || typeof word.text !== 'string' || word.text.trim().length < 4) {
+                    return null;
+                  }
+                  
+                  return (
+                    <span
+                      key={`${word.text}-${index}-${word.count}`}
+                      className="inline-block cursor-pointer transition-all duration-200 hover:scale-110 hover:text-primary"
+                      style={{
+                        fontSize: `${word.size || 16}px`,
+                        color: word.color || 'currentColor',
+                        fontWeight: Math.floor((word.size || 16) / 4) * 100 + 300,
+                      }}
+                      title={`"${word.text}" - ${word.count} keer gebruikt`}
+                    >
+                      {word.text}
+                    </span>
+                  );
+                })
+                .filter(Boolean) // Remove any null elements
+              }
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
