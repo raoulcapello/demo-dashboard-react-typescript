@@ -1,8 +1,8 @@
 # Project Overview
 
-This demo project showcases a modern, production-ready frontend that I built in under an hour, using a vibe coding workflow using [Lovable](https://lovable.dev/) and the [Cursor IDE](https://www.cursor.com/).
+This demo project showcases a modern, production-ready frontend that I built in under two hours(!), using a vibe coding workflow using [Lovable](https://lovable.dev/) and the [Cursor IDE](https://www.cursor.com/).
 
-Not only did I built this prototype in under an hour - I also implemented automated deployment in minutes using [Netlfiy](https://www.netlify.com/).
+Not only did I built this prototype in little time - I also implemented automated deployment in minutes using [Netlfiy](https://www.netlify.com/).
 
 I built it with React, TypeScript, shadcn/ui, and ViteJS, with a focus on rapid prototyping, clean architecture, and automated deployment.
 
@@ -67,7 +67,7 @@ Below are some screenshots demonstrating the main features and pages of this pro
 
 ## Development Approach
 
-- **Rapid Prototyping**: Built the entire demo—including UI, logic, and deployment—in under an hour.
+- **Rapid Prototyping**: Built the entire demo—including UI, logic, and deployment—in within two hours (!).
 - **TypeScript Best Practices**: Utilized advanced types, discriminated unions, and type inference for robust, self-documenting code.
 - **Component Modularity**: Structured with reusable, composable React components and hooks.
 - **UI/UX Quality**: Leveraged shadcn/ui and Tailwind CSS for accessible, visually appealing interfaces.
